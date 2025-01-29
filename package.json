@@ -1,0 +1,23 @@
+{
+  "name": "backend-project-revise-core",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syedtasavour/backend-project-revise-core.git"
+  },
+  "keywords": [
+    "javascript",
+    "backend"
+  ],
+  "author": "Syed Tasavour",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/syedtasavour/backend-project-revise-core/issues"
+  },
+  "homepage": "https://github.com/syedtasavour/backend-project-revise-core#readme",
+  "description": ""
+}
