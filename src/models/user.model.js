@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
       type: String, //Cloudinary
       required: true,
     },
-    coverimage: {
+    coverImage: {
       type: String, //Cloudinary
     },
     watchHistory: {
@@ -51,7 +51,7 @@ const userSchema = new mongoose.Schema(
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
-  this.password = bcrypt.hash(this.password, 8);
+  this.password = await bcrypt.hash(this.password, 8);
   next();
 });
 
