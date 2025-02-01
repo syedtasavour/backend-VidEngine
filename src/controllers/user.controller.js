@@ -205,6 +205,51 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
+const changeCurrentPasssword = asyncHandler(async (req, res) => {
+  const { oldPassword, newPassword, conPassword } = req.body;
 
+  // if (!(newPassword === conPassword)) {
+  //   throw new ApiError(401);
+  // }
 
-export { registerUser, loginUser, logoutUser, refreshAccessToken };
+  const user = await User.findById(req.user?._id);
+  if (!user) {
+    throw new ApiError(404, "User does not exist");
+  }
+  if (!(oldpassword && newPassword)) {
+    throw new ApiError(401, "old and new password is required");
+  }
+  const isPasswordValid = await user.isPasswordCorrect(oldPassword);
+  if (!isPasswordValid) {
+    throw new ApiError(401, "Enter Correct Password");
+  }
+
+  // user.password = newPassword;
+  // user.save({ validateBeforeSave: false });
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $set: { password: newPassword },
+    },
+    {
+      new: true,
+    }
+  );
+  res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Password changed successfully"));
+});
+
+const getCurrentUser = asyncHandler(async (req, res) => {
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "current user fetched successfully"));
+});
+
+export {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshAccessToken,
+  changeCurrentPasssword,getCurrentUser
+};
