@@ -148,7 +148,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: { refreshToken: undefined },
+      $unset: { refreshToken: 1 },
     },
     {
       new: true,
@@ -207,17 +207,18 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 });
 
 const changeCurrentPasssword = asyncHandler(async (req, res) => {
-  const { oldPassword, newPassword, conPassword } = req.body;
+  const { oldPassword, newPassword } = req.body;
 
   // if (!(newPassword === conPassword)) {
   //   throw new ApiError(401);
+
   // }
 
   const user = await User.findById(req.user?._id);
   if (!user) {
     throw new ApiError(404, "User does not exist");
   }
-  if (!(oldpassword && newPassword)) {
+  if (!(oldPassword && newPassword)) {
     throw new ApiError(401, "old and new password is required");
   }
   const isPasswordValid = await user.isPasswordCorrect(oldPassword);
@@ -248,19 +249,21 @@ const getCurrentUser = asyncHandler(async (req, res) => {
 });
 const updateAccountDetails = asyncHandler(async (req, res) => {
   const { fullName, email } = req.body;
+  
+
   if (!fullName || !email) {
     throw new ApiError(400, "All fields are required");
   }
-  const user = User.findByIdAndUpdate(
+  const user = await User.findByIdAndUpdate(
     req.user?._id,
     {
-      $set: { fullName, email },
+      $set: { fullName, email: email },
     },
     {
       new: true,
     }
   ).select("-password");
-  res
+  return res
     .status(200)
     .json(new ApiResponse(200, user, "Account Details updated successfully"));
 });
@@ -315,7 +318,8 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
-  if (!username?.trime) {
+
+  if (!username?.trim) {
     throw new ApiError(401, "username is missing");
   }
   // User.find({username})
@@ -344,14 +348,14 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
     {
       $addFields: {
         subscribersCount: {
-          $size: "$subscriber",
+          $size: "$subscribers",
         },
         channelsSubscribedToCount: {
           $size: "$subscribed",
         },
         isSubscribed: {
           $cond: {
-            if: { $in: [req.user?._id, "$subscribers.subscriber"] },
+            if: {$in: [req.user?._id, "$subscribers.subscriber"]},
             then: true,
             else: false,
           },
@@ -362,8 +366,8 @@ const getUserChannelProfile = asyncHandler(async (req, res) => {
       $project: {
         fullName: 1,
         username: 1,
-        subscribersCount,
-        channelsSubscribedToCount,
+        subscribersCount: 1,
+        channelsSubscribedToCount:1,
         isSubscribed: 1,
         avatar: 1,
         coverImage: 1,
@@ -422,10 +426,11 @@ const getWatchHistory = asyncHandler(async (req, res) => {
         },
       },
     },
-  ])
-  return res.status(200).json(200,user[0].watchHistory,"Watch history fetched successfully")
+  ]);
+  return res
+    .status(200)
+    .json(200, user[0].watchHistory, "Watch history fetched successfully");
 });
-
 
 export {
   registerUser,
@@ -438,5 +443,5 @@ export {
   updateUserAvatar,
   updateUserCoverImage,
   getUserChannelProfile,
-  getWatchHistory
+  getWatchHistory,
 };
