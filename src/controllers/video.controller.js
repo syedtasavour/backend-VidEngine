@@ -1,4 +1,4 @@
-import mongoose, { isValidObjectId } from "mongoose";
+import mongoose, { Mongoose, Schema } from "mongoose";
 import { Video } from "../models/video.model.js";
 import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -12,8 +12,68 @@ import {
 
 const getAllVideos = asyncHandler(async (req, res) => {
   const { page = 1, limit = 10, query, sortBy, sortType, userId } = req.query;
+  // const videos = await Video.find({ owner: userId })
 
-  //TODO: get all videos based on query, sort, pagination
+  if (!userId) {
+    throw new ApiError(406, "User ID nahi mila! Bhaiya, ID toh bhejo 🥺");
+  }
+  const sort = {};
+  if (sortBy) {
+    sort[sortBy] = sortType === "asc" ? 1 : -1; // asc = 1, desc = -1
+  } else {
+    sort.createdAt = -1; // Default: Latest Videos Pehle
+  }
+  const pageNumber = Number(page);
+  const limitNumber = Number(limit);
+
+  const videos = await Video.aggregate([
+    {
+      $match: {
+        owner: new mongoose.Types.ObjectId(userId),
+        isPublished: true,
+      },
+    },
+
+    {
+      $sort: sort,
+    },
+    {
+      $skip: (pageNumber - 1) * limitNumber,
+    },
+    {
+      $limit: limitNumber,
+    },
+
+    {
+      $lookup: {
+        from: "videos",
+        localField: "owner",
+        foreignField: "_id",
+        as: "videos",
+      },
+    },
+    {
+      $unwind: {
+        path: "$videos",
+        preserveNullAndEmptyArrays: true, // In case some videos don't have an owner record
+      },},
+
+    {
+      $project: {
+        videoFile: 1,
+        title: 1,
+        description: 1,
+        duration: 1,
+        views: 1,
+        isPublished: 1,
+        "ownerDetails.username": 1,
+      },
+    },
+  ]);
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, videos, "video fetched sucessfully"));
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {
@@ -145,9 +205,7 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
   });
   return res
     .status(200)
-    .json(
-      new ApiResponse(200, "Video publish status updated successfully")
-    );
+    .json(new ApiResponse(200, "Video publish status updated successfully"));
 });
 
 export {
