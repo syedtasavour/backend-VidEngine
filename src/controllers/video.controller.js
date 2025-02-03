@@ -15,7 +15,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
   // const videos = await Video.find({ owner: userId })
 
   if (!userId) {
-    throw new ApiError(406, "User ID nahi mila! Bhaiya, ID toh bhejo 🥺");
+    throw new ApiError(406, "User ID not found! Please provide a valid ID.");
   }
   const sort = {};
   if (sortBy) {
