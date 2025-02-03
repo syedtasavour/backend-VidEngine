@@ -1,6 +1,6 @@
 {
   "$schema": "http://json.schemastore.org/package",
-  "name": "backend-project-revise-core",
+  "name": "VidEngine",
   "version": "1.0.0",
   "type": "module",
   "main": "src/index.js",
@@ -14,14 +14,14 @@
   },
   "keywords": [
     "javascript",
-    "backend"
+    "VidEngine"
   ],
   "author": "Syed Tasavour",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/syedtasavour/backend-project-revise-core/issues"
+    "url": "https://github.com/syedtasavour/VidEngine/issues"
   },
-  "homepage": "https://github.com/syedtasavour/backend-project-revise-core#readme",
+  "homepage": "https://github.com/syedtasavour/VidEngine#readme",
   "description": "",
   "devDependencies": {
     "nodemon": "^3.1.9",
