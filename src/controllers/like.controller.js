@@ -3,7 +3,6 @@ import { Like } from "../models/like.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { response } from "express";
 
 const toggleVideoLike = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
@@ -11,6 +10,8 @@ const toggleVideoLike = asyncHandler(async (req, res) => {
     video: videoId,
     likedBy: req.user._id,
   });
+
+
   const likedData = await Like.findById(liked._id).select("likedBy video");
 
   if (!likedData) {
