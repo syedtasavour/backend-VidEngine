@@ -5,7 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Video } from "../models/video.model.js";
 
-const createPlaylist = async (req, res) => {
+const createPlaylist = asyncHandler (async (req, res) => {
   const { name, description } = req.params;
   //   console.log(name);
   // Get data from request body
@@ -38,24 +38,24 @@ const createPlaylist = async (req, res) => {
   return res
     .status(201)
     .json(new ApiResponse(201, playList, "Playlist created successfully."));
-};
+});
 const getUserPlaylists = asyncHandler(async (req, res) => {
   const { userId } = req.params;
-  const { page } = req.query;
+  const { page, limit } = req.query;
   const pageNumber = Number(page);
 
-  const playlist = await Playlist.aggregate([
+  const playlistAggregate = Playlist.aggregate([
     {
       $match: {
         owner: new mongoose.Types.ObjectId(userId),
       },
     },
-    {
-      $skip: (pageNumber - 1) * 10,
-    },
-    {
-      $limit: 10,
-    },
+    // {
+    //   $skip: (pageNumber - 1) * 10,
+    // },
+    // {
+    //   $limit: 10,
+    // },
     {
       $lookup: {
         from: "users",
@@ -83,7 +83,12 @@ const getUserPlaylists = asyncHandler(async (req, res) => {
         owner: 1,
       },
     },
-  ]);
+  ],);
+  const options = {
+    page: pageNumber,   // Current page
+    limit: 10, // Number of items per page
+  };
+  const playlist = await Playlist.aggregatePaginate(playlistAggregate,options)
 
   return res
     .status(302)

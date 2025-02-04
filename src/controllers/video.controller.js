@@ -26,7 +26,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
   const pageNumber = Number(page);
   const limitNumber = Number(limit);
 
-  const videos = await Video.aggregate([
+  const aggregateQuery  =  Video.aggregate([
     {
       $match: {
         owner: new mongoose.Types.ObjectId(userId),
@@ -36,12 +36,6 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
     {
       $sort: sort,
-    },
-    {
-      $skip: (pageNumber - 1) * limitNumber,
-    },
-    {
-      $limit: limitNumber,
     },
 
     {
@@ -70,10 +64,20 @@ const getAllVideos = asyncHandler(async (req, res) => {
       },
     },
   ]);
+   // Pagination options
+   const options = {
+    page: pageNumber,   // Current page
+    limit: limitNumber, // Number of items per page
+  };
+
+ 
+    const result = await Video.aggregatePaginate(aggregateQuery, options);
+   
+  
 
   return res
     .status(200)
-    .json(new ApiResponse(200, videos, "video fetched sucessfully"));
+    .json(new ApiResponse(200, result, "video fetched sucessfully"));
 });
 
 const publishAVideo = asyncHandler(async (req, res) => {

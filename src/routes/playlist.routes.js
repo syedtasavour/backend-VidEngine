@@ -9,7 +9,7 @@ import {
     updatePlaylist,
 } from "../controllers/playlist.controller.js"
 import {verifyJWT} from "../middlewares/auth.middleware.js"
-import { isPlaylistOwner } from '../middlewares/isPlayListOwner.middleware.js';
+import { isPlaylistOwner } from '../middlewares/isOwner.middleware.js';
 
 const router = Router();
 
