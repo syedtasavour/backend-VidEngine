@@ -63,11 +63,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
   const { subscriberId } = req.params;
   
   
-  // if (!mongoose.Types.ObjectId.isValid(subscriberId)) {
-  //   return res
-  //     .status(400)
-  //     .json(new ApiResponse(400, null, "Invalid channel ID."));
-  // }
+
 
   // const subs = await Subscription.find({ channel: subscriberId });
   // if (!subs.length) {
@@ -132,7 +128,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  console.log(channelId);
+  // console.log(channelId);
   
   if (!subscribers[0]) {
     subscribers[0] = { subscriberCount: 0 };
