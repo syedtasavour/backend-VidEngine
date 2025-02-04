@@ -6,6 +6,7 @@ import { Playlist } from "../models/playlist.model.js";
 import { Comment } from "../models/comment.model.js";
 import { mongoose } from "mongoose";
 import { Tweet } from "../models/tweet.model.js";
+import { Like } from "../models/like.model.js";
 
 const isOwner = asyncHandler(async (req, _, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.videoId)) {
@@ -21,7 +22,7 @@ const isOwner = asyncHandler(async (req, _, next) => {
 
   // Authorization check
   if (req.user._id.toString() !== check.owner.toString()) {
-    throw new ApiError(403, null,"Unauthorized access");
+    throw new ApiError(403, null, "Unauthorized access");
   }
   next();
 });
@@ -35,7 +36,7 @@ const isPlaylistOwner = asyncHandler(async (req, _, next) => {
   }
 
   if (playListOwner.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(403, null,"Unauthorized access");
+    throw new ApiError(403, null, "Unauthorized access");
   }
   next();
 });
@@ -49,28 +50,91 @@ const isCommentOwner = asyncHandler(async (req, _, next) => {
     throw new ApiError(404, "Comment does not exist");
   }
   if (commentOwner.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(403, null,"Unauthorized access");
+    throw new ApiError(403, null, "Unauthorized access");
   }
   // console.log(commentOwner);
 
   next();
 });
 
-const isTweetOwner = asyncHandler(async(req,_ , next)=>{
+const isTweetOwner = asyncHandler(async (req, _, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.tweetId)) {
-    throw new ApiError(404,null, "The provided tweet ID is invalid.");
+    throw new ApiError(404, null, "The provided tweet ID is invalid.");
   }
 
   const tweetOwner = await Tweet.findById(req.params.tweetId);
   if (!tweetOwner) {
-    throw new ApiError(404, null,"tweet does not exist");
+    throw new ApiError(404, null, "tweet does not exist");
   }
   if (tweetOwner.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(403, null,"Unauthorized access");
+    throw new ApiError(403, null, "Unauthorized access");
   }
-  
 
   next();
-})
+});
 
-export { isOwner, isPlaylistOwner, isCommentOwner , isTweetOwner };
+const isVideoLiked = asyncHandler(async (req, _, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.videoId)) {
+    throw new ApiError(404, null, "The provided video ID is invalid.");
+  }
+
+  const liked = await Like.aggregate([
+    {
+      $match: {
+        video: new mongoose.Types.ObjectId(req.params.videoId),
+        likedBy: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+  ]);
+  // console.log(liked);
+
+  if (liked.length) {
+    throw new ApiError(401, null, "Video already liked");
+  }
+  next();
+});
+const isCommentLiked = asyncHandler(async (req, _, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.commentId)) {
+    throw new ApiError(404, null, "The provided comment ID is invalid.");
+  }
+
+  const liked = await Like.aggregate([
+    {
+      $match: {
+        comment: new mongoose.Types.ObjectId(req.params.commentId),
+        likedBy: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+  ]);
+  // console.log(liked);
+
+  if (liked.length) {
+    throw new ApiError(401, null, "Comment already liked");
+  }
+  next();
+});
+
+const isTweetLiked = asyncHandler(async (req, _, next) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.tweetId)) {
+    throw new ApiError(404, null, "The provided comment ID is invalid.");
+  }
+
+  const liked = await Like.aggregate([
+    {
+      $match: {
+        tweet: new mongoose.Types.ObjectId(req.params.tweetId),
+        likedBy: new mongoose.Types.ObjectId(req.user._id),
+      },
+    },
+  ]);
+  // console.log(liked);
+
+  if (liked.length) {
+    throw new ApiError(401, null, "Comment already liked");
+  }
+  next();
+});
+
+
+
+export { isOwner, isPlaylistOwner, isCommentOwner, isTweetOwner, isVideoLiked, isCommentLiked,isTweetLiked };
