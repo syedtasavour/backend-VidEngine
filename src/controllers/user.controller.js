@@ -5,6 +5,10 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
+import fs from "fs";
+
+
+
 
 const generateAccessAndRefereshTokens = async (userId) => {
   try {
@@ -47,6 +51,8 @@ const registerUser = asyncHandler(async (req, res) => {
   });
 
   if (existedUser) {
+    fs.unlinkSync(req.files.avatar[0].path);
+    if (req.files?.coverImage?.[0]?.path) fs.unlinkSync(req.files.coverImage[0].path)
     throw new ApiError(409, "user with email or username already exists");
   }
 
