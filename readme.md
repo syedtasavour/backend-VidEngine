@@ -13,7 +13,8 @@ VidEngine is a robust backend system for a video-sharing platform, similar to Yo
 
 ## Documentation & Resources
 
-- **Postman Collection:** [#](#)
+- **Documentation:** [VidEngine Documentation](Documentation.md)
+- **Postman Collection:** [Postman Collection](backend.postman_collection.json)
 - **API Base URL:** [http://localhost:3000/api/v1/](http://localhost:3000/api/v1/)
 - **GitHub Repository:** [https://github.com/syedtasavour/VidEngine](https://github.com/syedtasavour/VidEngine)
 

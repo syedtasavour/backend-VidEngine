@@ -14,7 +14,7 @@ npm install
 
 ## Documentation & Resources
 
-- **Postman Collection:** [backend.postman_collection.json](backend.postman_collection.json)
+- **Postman Collection:** [Postman Collection](backend.postman_collection.json)
 - **API Base URL:** [http://localhost:3000/api/v1/](http://localhost:3000/api/v1/)
 - **GitHub Repository:** [https://github.com/syedtasavour/VidEngine](https://github.com/syedtasavour/VidEngine)
 
