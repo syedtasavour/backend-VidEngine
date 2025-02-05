@@ -76,6 +76,9 @@ const isTweetOwner = asyncHandler(async (req, _, next) => {
 const isVideoLiked = asyncHandler(async (req, _, next) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.videoId)) {
     throw new ApiError(404, null, "The provided video ID is invalid.");
+  }const validvideoId = await Video.findById(req.params.videoId);
+  if (!validvideoId) {
+    throw new ApiError(404, null,"video does not exist");
   }
 
   const liked = await Like.aggregate([
