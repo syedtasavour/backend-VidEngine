@@ -120,7 +120,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
   try {
     await Video.findById(videoId);
   } catch (error) {
-    throw new ApiError(404, "Video does not exist");
+    throw new ApiError(404, null, "Video does not exist");
   }
   const playlist = await Playlist.findByIdAndUpdate(
     playlistId,
