@@ -271,3 +271,92 @@ npm start
 - **Data Management:** Pagination, sorting, filtering, aggregates
 - **Additional Features:** Watch history tracking, channel stats
 
+## **Deploy on AWS**
+
+1. **Set up an EC2 instance:**
+    - Choose an Ubuntu or Amazon Linux AMI
+    - Select t2.micro for free tier or higher based on needs
+    - Create new key pair and download .pem file
+    - Configure security groups:
+      - SSH (Port 22)
+      - HTTP (Port 80)
+      - HTTPS (Port 443)
+      - Custom TCP (Port 3000)
+
+2. **Connect to EC2 instance:**
+    ```bash
+    chmod 400 your-key.pem
+    ssh -i your-key.pem ubuntu@your-ec2-public-dns
+    ```
+
+3. **Install dependencies:**
+    ```bash
+    sudo apt update && sudo apt upgrade -y
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt install -y nodejs npm
+    sudo apt install -y mongodb
+    sudo systemctl start mongodb
+    sudo systemctl enable mongodb
+    ```
+
+4. **Set up project:**
+    ```bash
+    git clone https://github.com/your-repo/videengine-backend.git
+    cd VidEngine
+    npm install
+    ```
+
+5. **Configure environment:**
+    ```bash
+    sudo nano .env
+    # Add all environment variables from the Getting Started section
+    ```
+
+6. **Set up PM2:**
+    ```bash
+    sudo npm install -g pm2
+    pm2 start src/index.js --name videengine
+    pm2 startup
+    pm2 save
+    ```
+
+7. **Install and configure Nginx:**
+    ```bash
+    sudo apt install -y nginx
+    sudo nano /etc/nginx/sites-available/default
+    ```
+    Add this configuration:
+    ```nginx
+    server {
+         listen 80;
+         server_name your-domain.com;
+
+         location / {
+              proxy_pass http://localhost:3000;
+              proxy_http_version 1.1;
+              proxy_set_header Upgrade $http_upgrade;
+              proxy_set_header Connection 'upgrade';
+              proxy_set_header Host $host;
+              proxy_cache_bypass $http_upgrade;
+         }
+    }
+    ```
+
+8. **Start services:**
+    ```bash
+    sudo systemctl restart nginx
+    sudo ufw allow 'Nginx Full'
+    ```
+
+9. **Set up SSL with Certbot:**
+    ```bash
+    sudo apt install -y certbot python3-certbot-nginx
+    sudo certbot --nginx -d your-domain.com
+    ```
+
+10. **Monitor logs:**
+     ```bash
+     pm2 logs videengine
+     sudo tail -f /var/log/nginx/error.log
+     ```
+
