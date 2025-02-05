@@ -131,14 +131,14 @@ const getVideoById = asyncHandler(async (req, res) => {
   const { videoId } = req.params;
 
   if (!videoId) {
-    throw new ApiError(404, "Video does not exist");
+    throw new ApiError(404, null, "Video does not exist");
   }
 
   const video = await Video.findById(videoId).select(
     "-_id -__v -owner -updatedAt"
   );
   if (!video) {
-    throw new ApiError(404, "Video does not exist");
+    throw new ApiError(404,null, "Video does not exist");
   }
   return res
     .status(200)
