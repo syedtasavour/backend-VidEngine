@@ -11,6 +11,11 @@ VidEngine is a robust backend system for a video-sharing platform, similar to Yo
 - **File Storage:** Cloudinary
 - **File Handling:** Multer
 
+## Project Time  
+![Project Time](total-time-spent-on-the-project.jpg)  
+The total time spent on the project is 29 hours and 8 minutes.
+
+
 ## Documentation & Resources
 
 - **Documentation:** [VidEngine Documentation](Documentation.md)
