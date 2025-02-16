@@ -15,6 +15,9 @@ VidEngine is a robust backend system for a video-sharing platform, similar to Yo
 ![Project Time](total-time-spent-on-the-project.jpg)  
 The total time spent on the project is 29 hours and 8 minutes.
 
+## 🌟 Show Your Support
+If you found this project helpful, give it a ⭐️!
+
 
 ## Documentation & Resources
 
@@ -237,3 +240,17 @@ The total time spent on the project is 29 hours and 8 minutes.
 - Testing guidelines
 - Contribution guide
 
+## 👤 Author
+**Syed Tasavour**  
+- GitHub: [@syedtasavour](https://github.com/syedtasavour)
+- Portfolio: [syedtasavour.me](https://syedtasavour.me)
+
+
+## 📞 Contact
+For any queries or support:
+- Email: `help@syedtasavour.me`
+- GitHub Issues: [Create an issue](https://github.com/syedtasavour/backend-VidEngine/issues)
+
+  <div align="center">
+  <sub>Built with passion (and a lot of coffee) by Syed Tasavour.</sub>
+</div>
