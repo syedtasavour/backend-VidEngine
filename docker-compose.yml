@@ -1,0 +1,66 @@
+# VidEngine full stack: database, API and web client.
+#
+#   cp .env.example .env     # fill in the Cloudinary keys and JWT secrets
+#   docker compose up --build
+#
+# Then open http://localhost:3000 — the web client is served there and proxies
+# /api to the backend, so the whole app runs behind that one port.
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: videngine-mongo
+    restart: unless-stopped
+    # Bound to loopback so the database is reachable from your machine (Compass,
+    # mongosh) without being exposed on the network.
+    ports:
+      - "127.0.0.1:${MONGO_PORT:-27017}:27017"
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
+  backend:
+    build:
+      context: ./backend
+    container_name: videngine-backend
+    restart: unless-stopped
+    # Exposed for Postman and direct API calls; the web client does not use it.
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      PORT: 8000
+      # The app appends /VidEngine to this, so no database name or trailing
+      # slash belongs here. Set MONGODB_URI in .env to point at Atlas instead.
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017}
+      CORS_ORIGIN: ${CORS_ORIGIN:-http://localhost:3000}
+      ACESS_TOKEN_SECRET: ${ACESS_TOKEN_SECRET:?set ACESS_TOKEN_SECRET in .env}
+      ACESS_TOKEN_EXPIRY: ${ACESS_TOKEN_EXPIRY:-1d}
+      REFRESH_TOKEN_SECRET: ${REFRESH_TOKEN_SECRET:?set REFRESH_TOKEN_SECRET in .env}
+      REFRESH_TOKEN_EXPIRY: ${REFRESH_TOKEN_EXPIRY:-10d}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME:?set CLOUDINARY_CLOUD_NAME in .env}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY:?set CLOUDINARY_API_KEY in .env}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET:?set CLOUDINARY_API_SECRET in .env}
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        # Same-origin by default: nginx forwards /api to the backend service.
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-/api/v1}
+    container_name: videngine-frontend
+    restart: unless-stopped
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      - backend
+
+volumes:
+  mongo-data:
