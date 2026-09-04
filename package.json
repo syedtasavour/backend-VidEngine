@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json.schemastore.org/package",
+  "name": "videngine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VidEngine monorepo: Express/MongoDB API and its mobile-first web client",
+  "scripts": {
+    "install:all": "npm --prefix backend install && npm --prefix frontend install",
+    "dev:backend": "npm --prefix backend run dev",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "start": "npm --prefix backend run start",
+    "build": "npm --prefix frontend run build"
+  },
+  "keywords": [
+    "javascript",
+    "VidEngine"
+  ],
+  "author": "Syed Tasavour",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/syedtasavour/VidEngine.git"
+  },
+  "bugs": {
+    "url": "https://github.com/syedtasavour/VidEngine/issues"
+  },
+  "homepage": "https://github.com/syedtasavour/VidEngine#readme"
+}

@@ -1,15 +1,46 @@
-# VidEngine - Video Platform Backend
+# VidEngine - Video Platform
 
 ## Project Overview
-VidEngine is a robust backend system for a video-sharing platform, similar to YouTube. It provides a complete API infrastructure for managing videos, user interactions, and social features.
+VidEngine is a video-sharing platform similar to YouTube: a complete Express/MongoDB
+API for videos, user interactions and social features, plus a mobile-first web
+client built on top of it.
+
+## Repository Layout
+
+```
+backend/    Express + MongoDB API (see backend/Documentation.md)
+frontend/   React + Vite web client (see frontend/README.md)
+```
 
 ## Core Technologies
+
+**Backend**
 - **Runtime:** Node.js
 - **Framework:** Express.js
 - **Database:** MongoDB with Mongoose ODM
 - **Authentication:** JWT (JSON Web Tokens)
 - **File Storage:** Cloudinary
 - **File Handling:** Multer
+
+**Frontend**
+- **Framework:** React 19 with React Router
+- **Build tool:** Vite
+- **Styling:** Tailwind CSS 4, mobile-first, with light and dark themes
+
+## Running Locally
+
+```bash
+npm run install:all          # install both workspaces
+
+# backend - needs backend/.env (copy backend/.env.sample)
+npm run dev:backend          # http://localhost:8000
+
+# frontend - in a second terminal
+npm run dev:frontend         # http://localhost:5173
+```
+
+The frontend proxies `/api` to the backend in development, so no CORS setup is
+needed. Note that the API reads its environment from `backend/.env`.
 
 ## Project Time  
 ![Project Time](total-time-spent-on-the-project.jpg)  
@@ -21,9 +52,10 @@ If you found this project helpful, give it a ⭐️!
 
 ## Documentation & Resources
 
-- **Documentation:** [VidEngine Documentation](Documentation.md)
-- **Postman Collection:** [Postman Collection](backend.postman_collection.json)
-- **API Base URL:** [http://localhost:3000/api/v1/](http://localhost:3000/api/v1/)
+- **Documentation:** [VidEngine Documentation](backend/Documentation.md)
+- **Postman Collection:** [Postman Collection](backend/backend.postman_collection.json)
+- **Frontend Guide:** [Frontend README](frontend/README.md)
+- **API Base URL:** [http://localhost:8000/api/v1/](http://localhost:8000/api/v1/)
 - **GitHub Repository:** [Syed Tasavour](https://github.com/syedtasavour/VidEngine)
 
 ## Key Features
