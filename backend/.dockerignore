@@ -1,0 +1,11 @@
+node_modules
+npm-debug.log*
+.env
+.env.*
+!.env.sample
+public/temp/*
+!public/temp/.gitkeep
+Documentation.md
+backend.postman_collection.json
+Dockerfile
+.dockerignore

@@ -1,15 +1,104 @@
-# VidEngine - Video Platform Backend
+# VidEngine - Video Platform
 
 ## Project Overview
-VidEngine is a robust backend system for a video-sharing platform, similar to YouTube. It provides a complete API infrastructure for managing videos, user interactions, and social features.
+VidEngine is a video-sharing platform similar to YouTube: a complete Express/MongoDB
+API for videos, user interactions and social features, plus a mobile-first web
+client built on top of it.
+
+## Repository Layout
+
+```
+backend/              Express + MongoDB API (see backend/Documentation.md)
+frontend/             React + Vite web client (see frontend/README.md)
+docker-compose.yml    Runs the whole stack on port 3000
+.env.example          Copy to .env for Docker
+```
 
 ## Core Technologies
+
+**Backend**
 - **Runtime:** Node.js
 - **Framework:** Express.js
 - **Database:** MongoDB with Mongoose ODM
 - **Authentication:** JWT (JSON Web Tokens)
 - **File Storage:** Cloudinary
 - **File Handling:** Multer
+
+**Frontend**
+- **Framework:** React 19 with React Router
+- **Build tool:** Vite
+- **Styling:** Tailwind CSS 4, mobile-first, with light and dark themes
+
+## Quick Start with Docker
+
+The fastest way to get everything running — database, API and web client — with
+no Node or MongoDB installed on your machine.
+
+```bash
+cp .env.example .env     # fill in the Cloudinary keys and the two JWT secrets
+docker compose up --build
+```
+
+Then open **http://localhost:3000**.
+
+That single port is all you need: the web client is served there and forwards
+`/api` to the backend, so the browser only ever talks to one origin and no CORS
+setup is involved. Because the port is published on all interfaces, you can also
+open the app from your phone at `http://<your-computer-ip>:3000`, which is worth
+doing since the UI is designed mobile-first.
+
+| Service | URL | Notes |
+| --- | --- | --- |
+| Web client | http://localhost:3000 | The app — start here |
+| API | http://localhost:8000/api/v1 | Exposed for Postman and curl |
+| MongoDB | `mongodb://localhost:27017` | Bound to localhost only |
+
+Everything in `.env.example` has a working default except the two JWT secrets
+and the three Cloudinary keys, which have no sensible default. Compose fails
+with a named error if any of them is missing.
+
+```bash
+docker compose up -d          # run in the background
+docker compose logs -f        # follow the logs
+docker compose down           # stop
+docker compose down -v        # stop and wipe the database volume
+```
+
+Data lives in the `mongo-data` volume and survives restarts. To use MongoDB
+Atlas instead of the bundled database, set `MONGODB_URI` in `.env` — the app
+appends `/VidEngine` to it, so leave off the database name and trailing slash.
+
+## Running Locally without Docker
+
+```bash
+npm run install:all          # install both workspaces
+
+# backend - needs backend/.env (copy backend/.env.sample)
+npm run dev:backend          # http://localhost:8000
+
+# frontend - in a second terminal
+npm run dev:frontend         # http://localhost:5173
+```
+
+The dev server proxies `/api` to the backend, so again no CORS setup is needed.
+Note that in this mode the API reads its environment from `backend/.env`, not
+the root `.env` that Docker uses.
+
+## The Web Client
+
+A mobile-first single-page app covering the whole API: authentication, video
+upload and playback, comments, likes, tweets, playlists, subscriptions, watch
+history, a creator studio and account settings.
+
+Every screen is designed at 390px first and enhanced upward. Navigation follows
+the viewport — a fixed bottom tab bar under the thumb on phones, a persistent
+sidebar from `md`, and a slide-in drawer in between. Touch targets stay at 44px,
+inputs use 16px text so iOS Safari does not zoom on focus, safe-area insets are
+respected on notched devices, and modals render as bottom sheets on phones and
+centred dialogs on desktop. Light and dark themes follow the system preference
+and can be overridden. Routes are lazy-loaded.
+
+See [frontend/README.md](frontend/README.md) for the full breakdown.
 
 ## Project Time  
 ![Project Time](total-time-spent-on-the-project.jpg)  
@@ -21,9 +110,10 @@ If you found this project helpful, give it a ⭐️!
 
 ## Documentation & Resources
 
-- **Documentation:** [VidEngine Documentation](Documentation.md)
-- **Postman Collection:** [Postman Collection](backend.postman_collection.json)
-- **API Base URL:** [http://localhost:3000/api/v1/](http://localhost:3000/api/v1/)
+- **Documentation:** [VidEngine Documentation](backend/Documentation.md)
+- **Postman Collection:** [Postman Collection](backend/backend.postman_collection.json)
+- **Frontend Guide:** [Frontend README](frontend/README.md)
+- **API Base URL:** [http://localhost:8000/api/v1/](http://localhost:8000/api/v1/)
 - **GitHub Repository:** [Syed Tasavour](https://github.com/syedtasavour/VidEngine)
 
 ## Key Features
